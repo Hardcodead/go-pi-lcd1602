@@ -1,7 +1,7 @@
 # Golang  LCD1602 (LCD16x2) for RaspberryPi 
-[![GoDoc](https://godoc.org/github.com/pimvanhespen/go-pi-lcd1602?status.svg)](https://godoc.org/github.com/pimvanhespen/go-pi-lcd1602)
-[![Go Report Card](https://goreportcard.com/badge/github.com/pimvanhespen/go-pi-lcd1602)](https://goreportcard.com/report/github.com/pimvanhespen/go-pi-lcd1602)
-[![license](https://img.shields.io/github/license/pimvanhespen/go-pi-lcd1602.svg)](https://github.com/pimvanhespen/go-pi-lcd1602/blob/master/LICENSE.md)
+[![GoDoc](https://godoc.org/github.com/hardcodead/go-pi-lcd1602?status.svg)](https://godoc.org/github.com/hardcodead/go-pi-lcd1602)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hardcodead/go-pi-lcd1602)](https://goreportcard.com/report/github.com/hardcodead/go-pi-lcd1602)
+[![license](https://img.shields.io/github/license/hardcodead/go-pi-lcd1602.svg)](https://github.com/hardcodead/go-pi-lcd1602/blob/master/LICENSE.md)
 
 
 Use LCD screens in your Go RPi applications!
@@ -22,9 +22,9 @@ I wrote a virtual representation of an LCD screen. You can use it for debugging 
 ### Import
 
 ```go
-import "github.com/pimvanhespen/go-pi-lcd1602"
+import "github.com/hardcodead/go-pi-lcd1602"
 ```
-Also checkout the [examples](https://github.com/pimvanhespen/go-pi-lcd1602/tree/master/examples)!
+Also checkout the [examples](https://github.com/hardcodead/go-pi-lcd1602/tree/master/examples)!
 
 ### Short example
 ```go

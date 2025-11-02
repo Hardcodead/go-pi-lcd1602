@@ -1,9 +1,9 @@
 package main
 
 import (
-	lcd1602 "github.com/pimvanhespen/go-pi-lcd1602"
-	"github.com/pimvanhespen/go-pi-lcd1602/gif2lcd"
-	synchronizedLcd "github.com/pimvanhespen/go-pi-lcd1602/synchronized"
+	lcd1602 "github.com/hardcodead/go-pi-lcd1602"
+	"github.com/hardcodead/go-pi-lcd1602/gif2lcd"
+	synchronizedLcd "github.com/hardcodead/go-pi-lcd1602/synchronized"
 )
 
 func main() {

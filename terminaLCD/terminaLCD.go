@@ -7,11 +7,11 @@ import (
 	"sync"
 
 	"github.com/fatih/color"
-	lcd "github.com/pimvanhespen/go-pi-lcd1602"
+	lcd "github.com/hardcodead/go-pi-lcd1602"
 )
 
 type TerminalLCD struct {
-	//path string
+	// path string
 	file         *os.File
 	linewidth    int
 	line1, line2 string
@@ -19,8 +19,7 @@ type TerminalLCD struct {
 }
 
 func (f *TerminalLCD) Initialize() {
-
-	//TODO Pim van Hespen: move this to config
+	// TODO Pim van Hespen: move this to config
 	f.linewidth = 16
 
 	dir, err1 := os.Getwd()
@@ -43,9 +42,9 @@ func (f *TerminalLCD) Initialize() {
 		panic(err)
 	}
 
-	//f.path = path
+	// f.path = path
 
-	//display command for viewing output to user
+	// display command for viewing output to user
 	fmt.Println("The Terminal LCD is visible with the following command on Linux")
 	fmt.Printf("\n\ttail -f %s\n\n", path)
 	f.file = file
@@ -57,9 +56,10 @@ func (f *TerminalLCD) Initialize() {
 	// overwrite default output for goterm
 	//	tm.Output = bufio.NewWriter(f.file)
 }
+
 func (f *TerminalLCD) Clear() {
-	f.WriteLine("", lcd.LINE_1)
-	f.WriteLine("", lcd.LINE_2)
+	f.WriteLine("", lcd.Line1)
+	f.WriteLine("", lcd.Line2)
 }
 func (f *TerminalLCD) EntryModeSet(a, b bool)   {}
 func (f *TerminalLCD) DisplayMode(a, b, c bool) {}
@@ -93,42 +93,41 @@ func ReplaceCustomCharacters(s string) string {
 }
 
 func (f *TerminalLCD) Update() {
-
 	frmt := fmt.Sprintf("%%%ds", f.linewidth)
 
-	//content
+	// content
 	lcdLineOne := fmt.Sprintf(frmt, ReplaceCustomCharacters(f.line1))
 	lcdLineTwo := fmt.Sprintf(frmt, ReplaceCustomCharacters(f.line2))
 
-	//unicode points
+	// unicode points
 	ucTop, ucLeft, usRight, ucBottom := "\u2581", "\u2588", "\u2588", "\u2594"
 	top := strings.Repeat(ucTop, 18)
 	bottom := strings.Repeat(ucBottom, 18)
 
-	//colors
+	// colors
 	boldwhiteblack := color.New(color.FgHiWhite, color.BgBlack, color.Bold)
 	whitegreen := color.New(color.FgHiWhite, color.BgGreen)
 	blackgreen := color.New(color.FgBlack, color.BgGreen)
 	yellowgreen := color.New(color.FgYellow, color.BgGreen)
 	whiteblue := color.New(color.BgBlue, color.FgHiWhite)
 
-	//apply color to lcd lines
+	// apply color to lcd lines
 	lcdLineOne = whiteblue.Sprint(lcdLineOne)
 	lcdLineTwo = whiteblue.Sprint(lcdLineTwo)
 
-	//string pieces
+	// string pieces
 	emptyPre := boldwhiteblack.Sprint(strings.Repeat(" ", 7))
 	lineTrailing := boldwhiteblack.Sprint(strings.Repeat(" ", 4))
 
-	//lines
+	// lines
 	preHeadLine := emptyPre + blackgreen.Sprint("\u2981") + yellowgreen.Sprintf(" %s ", strings.Repeat("\u2596", 16)) + blackgreen.Sprint("\u2981") + lineTrailing
 	headline := emptyPre + whitegreen.Sprintf(" %s ", top) + lineTrailing
 	secondLine := boldwhiteblack.Sprint(" DEBUG ") + whitegreen.Sprintf(" %s", ucLeft) + lcdLineOne + whitegreen.Sprintf("%s ", usRight) + lineTrailing
 	thirdLine := boldwhiteblack.Sprint("  LCD\u2122 ") + whitegreen.Sprintf(" %s", ucLeft) + lcdLineTwo + whitegreen.Sprintf("%s ", usRight) + lineTrailing
 	bottomLine := emptyPre + blackgreen.Sprint("\u2981") + whitegreen.Sprintf("%s", bottom) + blackgreen.Sprint("\u2981") + lineTrailing
 
-	//spacing
-	marginLine := strings.Repeat(" ", 31) //ugly... I Know
+	// spacing
+	marginLine := strings.Repeat(" ", 31) // ugly... I Know
 
 	result := "\033[2J\n" + strings.Join([]string{
 		boldwhiteblack.Sprintf("%s", marginLine),
@@ -155,11 +154,10 @@ func (f *TerminalLCD) Update() {
 	f.file.Write([]byte(result))
 
 	f.file.Sync()
-
 }
 
 func (f *TerminalLCD) WriteLine(s string, line lcd.LineNumber) {
-	if line == lcd.LINE_1 {
+	if line == lcd.Line1 {
 		f.line1 = s
 	} else {
 		f.line2 = s

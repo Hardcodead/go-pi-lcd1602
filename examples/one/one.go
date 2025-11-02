@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	lcd1602 "github.com/pimvanhespen/go-pi-lcd1602"
-	"github.com/pimvanhespen/go-pi-lcd1602/synchronized"
+	lcd1602 "github.com/hardcodead/go-pi-lcd1602"
+	"github.com/hardcodead/go-pi-lcd1602/synchronized"
 )
 
 func main() {

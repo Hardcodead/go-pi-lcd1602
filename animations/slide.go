@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pimvanhespen/go-pi-lcd1602/stringutils"
+	"github.com/hardcodead/go-pi-lcd1602/stringutils"
 )
 
 type SlideAnimation struct {

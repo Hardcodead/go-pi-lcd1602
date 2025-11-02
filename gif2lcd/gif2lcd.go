@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	lcd "github.com/pimvanhespen/go-pi-lcd1602"
-	"github.com/pimvanhespen/go-pi-lcd1602/stringutils"
-	"github.com/pimvanhespen/go-pi-lcd1602/synchronized"
+	lcd "github.com/hardcodead/go-pi-lcd1602"
+	"github.com/hardcodead/go-pi-lcd1602/stringutils"
+	"github.com/hardcodead/go-pi-lcd1602/synchronized"
 )
 
 /*

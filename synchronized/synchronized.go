@@ -3,8 +3,8 @@ package synchronized
 import (
 	"sync"
 
-	lcd "github.com/pimvanhespen/go-pi-lcd1602"
-	"github.com/pimvanhespen/go-pi-lcd1602/animations"
+	lcd "github.com/hardcodead/go-pi-lcd1602"
+	"github.com/hardcodead/go-pi-lcd1602/animations"
 )
 
 type SynchronizedLCD struct {
@@ -18,15 +18,16 @@ func NewSynchronizedLCD(l lcd.LCDI) *SynchronizedLCD {
 		l, sync.Mutex{}, sync.Mutex{},
 	}
 }
+
 func (l *SynchronizedLCD) WriteLines(lines ...string) {
 	if len(lines) > 0 {
 		l.line1.Lock()
-		l.WriteLine(lines[0], lcd.LINE_1)
+		l.WriteLine(lines[0], lcd.Line1)
 		l.line1.Unlock()
 	}
 	if len(lines) > 1 {
 		l.line2.Lock()
-		l.WriteLine(lines[1], lcd.LINE_2)
+		l.WriteLine(lines[1], lcd.Line2)
 		l.line2.Unlock()
 	}
 }
@@ -34,8 +35,8 @@ func (l *SynchronizedLCD) WriteLines(lines ...string) {
 func (l *SynchronizedLCD) Animate(animation animations.Animation, line lcd.LineNumber) chan bool {
 	done := make(chan bool, 1)
 	var mut sync.Mutex
-	//TODO: fix hardcoding (catch error for unrecognizedlines, etc..)
-	if line == lcd.LINE_1 {
+	// TODO: fix hardcoding (catch error for unrecognizedlines, etc..)
+	if line == lcd.Line1 {
 		mut = l.line1
 	} else {
 		mut = l.line2

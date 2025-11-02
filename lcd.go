@@ -11,25 +11,20 @@ import (
 )
 
 const (
-	RS_DATA        = true  //sending data
-	RS_INSTRUCTION = false //sending an instruction
+	RSData        = true  // sending data
+	RSInstruction = false // sending an instruction
 
-	LINE_1 = LineNumber(0x80) // address for the 1st line
-	LINE_2 = LineNumber(0xC0) // address for the 2nd line
+	Line1 = LineNumber(0x80) // address for the 1st line
+	Line2 = LineNumber(0xC0) // address for the 2nd line
 )
 
 var (
-	ENABLE_DELAY               = 1 * time.Microsecond
-	EXECUTION_TIME_DEFAULT     = 40 * time.Microsecond
-	EXECUTION_TIME_RETURN_HOME = 1520 * time.Microsecond
+	EnableDelay             = 1 * time.Microsecond
+	ExecutionTimeDefault    = 40 * time.Microsecond
+	ExecutionTimeReturnHome = 1520 * time.Microsecond
 )
 
-var lines = map[int]LineNumber{
-	1: LINE_1,
-	2: LINE_2,
-}
-
-//global used to ensure the rpio library is nitialized befure using it.
+// global used to ensure the rpio library is nitialized befure using it.
 var rpioPrepared = false
 
 type LineNumber uint8
@@ -67,7 +62,7 @@ func SetCustomCharacters(l LCDI, characters []Character) {
 	}
 }
 
-//function should be called before executing any other code!
+// function should be called before executing any other code!
 func Open() {
 	if err := rpio.Open(); err != nil {
 		fmt.Println(err)
@@ -83,7 +78,6 @@ func Close() {
 }
 
 func New(rs, e int, data []int, linewidth int) *LCD {
-
 	datalength := len(data)
 	if datalength != 4 && datalength != 8 {
 		errors.New("LCD requires four or eight datapins!")
@@ -110,28 +104,28 @@ func (l *LCD) Width() int {
 	return l.LineWidth
 }
 
-//Init initiates the LCD
+// Init initiates the LCD
 func (l *LCD) Initialize() {
 	l.Reset()
 
 	l.EntryModeSet(true, false)
 	l.DisplayMode(true, false, false) // Display, Cursor, Blink
 
-	l.Write(0x28, RS_INSTRUCTION) // 00101000 - Set DDRAM Address
+	l.Write(0x28, RSInstruction) // 00101000 - Set DDRAM Address
 	l.ReturnHome()
 
 	l.Clear() // clear screen
-	//init time...
+	// init time...
 	time.Sleep(10 * time.Millisecond)
 }
 
-//ReturnHome function returns the cursor to home
+// ReturnHome function returns the cursor to home
 func (l *LCD) ReturnHome() {
-	l.Write(0x02, RS_INSTRUCTION)
-	time.Sleep(EXECUTION_TIME_RETURN_HOME)
+	l.Write(0x02, RSInstruction)
+	time.Sleep(ExecutionTimeReturnHome)
 }
 
-//EntryModeSet function
+// EntryModeSet function
 func (l *LCD) EntryModeSet(increment, shift bool) {
 	instruction := uint8(0x04)
 	if increment {
@@ -140,10 +134,10 @@ func (l *LCD) EntryModeSet(increment, shift bool) {
 	if shift {
 		instruction |= 0x01
 	}
-	l.Write(instruction, RS_INSTRUCTION)
+	l.Write(instruction, RSInstruction)
 }
 
-//DisplayMode function set the display modes
+// DisplayMode function set the display modes
 func (l *LCD) DisplayMode(display, cursor, blink bool) {
 	instruction := uint8(0x08)
 
@@ -156,16 +150,16 @@ func (l *LCD) DisplayMode(display, cursor, blink bool) {
 	if blink {
 		instruction |= 0x01
 	}
-	l.Write(instruction, RS_INSTRUCTION)
+	l.Write(instruction, RSInstruction)
 }
 
-//Clear function clears the screen
+// Clear function clears the screen
 func (l *LCD) Clear() {
-	l.Write(0x01, RS_INSTRUCTION)
+	l.Write(0x01, RSInstruction)
 }
 
-//WriteLine function writes a single line fo text to the LCD
-//if line length exceeds the linelength of the LCD, aslice will be used
+// WriteLine function writes a single line fo text to the LCD
+// if line length exceeds the linelength of the LCD, aslice will be used
 func (l *LCD) WriteLine(s string, line LineNumber) {
 	l.linelock.Lock()
 	defer l.linelock.Unlock()
@@ -174,14 +168,14 @@ func (l *LCD) WriteLine(s string, line LineNumber) {
 
 	s = s[:l.LineWidth]
 
-	l.Write(uint8(line), RS_INSTRUCTION)
+	l.Write(uint8(line), RSInstruction)
 
 	for _, c := range s {
-		l.Write(uint8(c), RS_DATA)
+		l.Write(uint8(c), RSData)
 	}
 }
 
-//Write function writes data to the LCD
+// Write function writes data to the LCD
 func (l *LCD) Write(data uint8, mode bool) {
 	l.writelock.Lock()
 	defer l.writelock.Unlock()
@@ -202,7 +196,7 @@ func (l *LCD) Write(data uint8, mode bool) {
 		for i, dataPin := range l.DataPins {
 			setBitToPin(dataPin, data, base<<uint8(i))
 		}
-		l.enable(EXECUTION_TIME_DEFAULT)
+		l.enable(ExecutionTimeDefault)
 		// lowest order bits
 		base = uint8(0x01)
 		for i, dataPin := range l.DataPins {
@@ -215,12 +209,12 @@ func (l *LCD) Write(data uint8, mode bool) {
 			setBitToPin(dataPin, data, base<<uint8(i))
 		}
 	}
-	l.enable(EXECUTION_TIME_DEFAULT)
+	l.enable(ExecutionTimeDefault)
 }
 
 func (l *LCD) CreateChar(position uint8, data Character) {
 	if position > 7 {
-		//error
+		// error
 		return
 	}
 	l.Write(0x40|(position<<3), false)
@@ -229,16 +223,16 @@ func (l *LCD) CreateChar(position uint8, data Character) {
 	}
 }
 
-//Reset resets the lcd
+// Reset resets the lcd
 func (l *LCD) Reset() {
-	//init sequence
-	l.Write(0x33, RS_INSTRUCTION)
-	time.Sleep(EXECUTION_TIME_DEFAULT)
-	l.Write(0x32, RS_INSTRUCTION)
-	time.Sleep(EXECUTION_TIME_DEFAULT)
+	// init sequence
+	l.Write(0x33, RSInstruction)
+	time.Sleep(ExecutionTimeDefault)
+	l.Write(0x32, RSInstruction)
+	time.Sleep(ExecutionTimeDefault)
 }
 
-//setBitToPin function sets given pin to a bit value from a given data int
+// setBitToPin function sets given pin to a bit value from a given data int
 func setBitToPin(pin rpio.Pin, data, position uint8) {
 	if data&position == position {
 		pin.High()
@@ -247,11 +241,11 @@ func setBitToPin(pin rpio.Pin, data, position uint8) {
 	}
 }
 
-//Enable function sets the 'Enable'-pin high, and low to enable 2Xa single write sequence
+// Enable function sets the 'Enable'-pin high, and low to enable 2Xa single write sequence
 func (l *LCD) enable(executionTime time.Duration) {
-	time.Sleep(ENABLE_DELAY)
+	time.Sleep(EnableDelay)
 	l.E.High()
-	time.Sleep(ENABLE_DELAY)
+	time.Sleep(EnableDelay)
 	l.E.Low()
 	time.Sleep(executionTime)
 }
