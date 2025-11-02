@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	lcd1602 "github.com/hardcodead/go-pi-lcd1602"
 	"github.com/hardcodead/go-pi-lcd1602/animations"
 	"github.com/hardcodead/go-pi-lcd1602/stringutils"
@@ -8,12 +10,15 @@ import (
 )
 
 func main() {
-	lcd := lcd1602.New(
+	lcd, err := lcd1602.New(
 		10,                   // rs
 		9,                    // enable
 		[]int{6, 13, 19, 26}, // datapins
 		16,                   // lineSize
 	)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	lcd.Initialize()
 

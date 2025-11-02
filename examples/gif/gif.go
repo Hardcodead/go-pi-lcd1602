@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	lcd1602 "github.com/hardcodead/go-pi-lcd1602"
 	"github.com/hardcodead/go-pi-lcd1602/gif2lcd"
 	synchronizedLcd "github.com/hardcodead/go-pi-lcd1602/synchronized"
@@ -9,12 +11,16 @@ import (
 func main() {
 	// !! WARNING! USE AT OWN RISK !!
 	// !! FLASHING THE CGRAM MIGHT NOT BE GOOD FOR YOUR LCD !!
-	lcd := lcd1602.New(
-		10,                   //rs
-		9,                    //enable
-		[]int{6, 13, 19, 26}, //datapins
-		16,                   //lineSize
+	lcd, err := lcd1602.New(
+		10,                   // rs
+		9,                    // enable
+		[]int{6, 13, 19, 26}, // datapins
+		16,                   // lineSize
 	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	lcd.Initialize()
 
 	lcdi := synchronizedLcd.NewSynchronizedLCD(lcd)

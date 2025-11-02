@@ -3,7 +3,7 @@ package lcd1602
 import (
 	"errors"
 	"fmt"
-	"os"
+	"log"
 	"sync"
 	"time"
 
@@ -62,25 +62,28 @@ func SetCustomCharacters(l LCDI, characters []Character) {
 	}
 }
 
-// function should be called before executing any other code!
+// Open function should be called before executing any other code!
 func Open() {
 	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
+
 	rpioPrepared = true
 }
 
 func Close() {
 	if rpioPrepared {
-		rpio.Close()
+		err := rpio.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 }
 
-func New(rs, e int, data []int, linewidth int) *LCD {
+func New(rs, e int, data []int, linewidth int) (*LCD, error) {
 	datalength := len(data)
 	if datalength != 4 && datalength != 8 {
-		errors.New("LCD requires four or eight datapins!")
+		return nil, errors.New("LCD requires four or eight datapins")
 	}
 
 	datapins := make([]rpio.Pin, 0)
@@ -96,7 +99,7 @@ func New(rs, e int, data []int, linewidth int) *LCD {
 		LineWidth: linewidth,
 	}
 	l.initPins()
-	return l
+	return l, nil
 }
 
 func (l *LCD) Close() {}
@@ -104,7 +107,7 @@ func (l *LCD) Width() int {
 	return l.LineWidth
 }
 
-// Init initiates the LCD
+// Initialize initiates the LCD
 func (l *LCD) Initialize() {
 	l.Reset()
 
