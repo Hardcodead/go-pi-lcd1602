@@ -34,24 +34,29 @@ func (l *SynchronizedLCD) WriteLines(lines ...string) {
 
 func (l *SynchronizedLCD) Animate(animation animations.Animation, line lcd.LineNumber) chan bool {
 	done := make(chan bool, 1)
-	var mut sync.Mutex
-	// TODO: fix hardcoding (catch error for unrecognizedlines, etc..)
-	if line == lcd.Line1 {
-		mut = l.line1
-	} else {
-		mut = l.line2
+
+	switch line {
+	case lcd.Line1:
+		l.line1.Lock()
+	case lcd.Line2:
+		l.line2.Lock()
 	}
 
-	mut.Lock()
 	go func() {
-		animation.Width(l.LCDI.Width())
+		animation.Width(l.Width())
 		for !animation.Done() {
 			s := animation.Content()
 			l.WriteLine(s, line)
 			animation.Delay()
 
 		}
-		mut.Unlock()
+
+		switch line {
+		case lcd.Line1:
+			l.line1.Unlock()
+		case lcd.Line2:
+			l.line2.Unlock()
+		}
 		done <- true
 	}()
 
