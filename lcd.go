@@ -24,7 +24,7 @@ var (
 	ExecutionTimeReturnHome = 1520 * time.Microsecond
 )
 
-// global used to ensure the rpio library is nitialized befure using it.
+// global used to ensure the rpio library is nitialized befure using it..
 var rpioPrepared = false
 
 type LineNumber uint8
